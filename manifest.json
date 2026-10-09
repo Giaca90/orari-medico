@@ -1,13 +1,13 @@
 {
-  "name": "Orari Dott. Di Cintio",
-  "short_name": "Dr. Di Cintio",
+  "name": "Orari Dott. Giulio Di Cintio",
+  "short_name": "Orari Medico",
   "start_url": "./index.html",
   "display": "standalone",
   "background_color": "#ffffff",
   "theme_color": "#007bff",
   "icons": [
     {
-      "src": "https://cdn-icons-png.flaticon.com/512/3063/3063822.png",
+      "src": "https://cdn-icons-png.flaticon.com/512/883/883407.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any maskable"
