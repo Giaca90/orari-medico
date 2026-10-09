@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Orari Dott. Giulio Di Cintio</title>
+    <style>
+        :root {
+            --primary-color: #007bff;
+            --bg-color: #f4f6f9;
+            --card-bg: #ffffff;
+            --text-color: #333;
+            --text-muted: #666;
+            --border-color: #e0e0e0;
+            --highlight-bg: #fff9db;
+            --highlight-border: #fcc419;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 500px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 15px;
+            background: var(--card-bg);
+            padding: 15px;
+            border-radius: 12px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        h1 {
+            font-size: 1.3rem;
+            margin: 0 0 5px 0;
+            color: var(--primary-color);
+        }
+
+        .subtitle {
+            font-size: 0.9rem;
+            margin: 0;
+            color: var(--text-muted);
+            line-height: 1.4;
+        }
+
+        .status-badge {
+            text-align: center;
+            padding: 12px;
+            border-radius: 12px;
+            font-weight: bold;
+            font-size: 1rem;
+            margin-bottom: 10px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+        .status-open { background-color: #d3f9d8; color: #2b8a3e; }
+        .status-closed { background-color: #ffe3e3; color: #c92a2a; }
+
+        .tabs {
+            display: flex;
+            background: #e0e0e0;
+            border-radius: 8px;
+            padding: 3px;
+            margin-bottom: 15px;
+        }
+
+        .tab-btn {
+            flex: 1;
+            border: none;
+            background: transparent;
+            padding: 10px;
+            font-size: 0.9rem;
+            font-weight: bold;
+            cursor: pointer;
+            border-radius: 6px;
+            transition: all 0.2s;
+            color: var(--text-muted);
+        }
+
+        .tab-btn.active {
+            background: var(--card-bg);
+            color: var(--primary-color);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        .address-box {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 10px;
+            margin-bottom: 12px;
+        }
+
+        .timetable-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 8px;
+            border-bottom: 1px dashed var(--border-color);
+            font-size: 0.95rem;
+            border-radius: 6px;
+        }
+
+        .timetable-row:last-child {
+            border-bottom: none;
+        }
+
+        .timetable-row.today-highlight {
+            background-color: var(--highlight-bg);
+            border: 1px solid var(--highlight-border);
+            font-weight: bold;
+        }
+
+        .day-name {
+            width: 90px;
+        }
+
+        .time-value {
+            text-align: right;
+            color: #000;
+        }
+
+        .info-section {
+            font-size: 0.85rem;
+            line-height: 1.5;
+        }
+
+        .info-title {
+            font-weight: bold;
+            color: var(--primary-color);
+            margin-top: 0;
+            margin-bottom: 6px;
+        }
+
+        .btn-call {
+            display: inline-block;
+            background: var(--primary-color);
+            color: white;
+            text-decoration: none;
+            padding: 10px 14px;
+            border-radius: 6px;
+            margin-top: 5px;
+            font-weight: bold;
+            font-size: 0.9rem;
+            text-align: center;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        ul {
+            margin: 5px 0;
+            padding-left: 20px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        
+        <div class="header">
+            <h1>Dott. Giulio DI CINTIO</h1>
+            <p class="subtitle">Medico di Medicina Generale<br>Convenzionato SSN - AUSL di Imola</p>
+        </div>
+
+        <!-- Riquadro Stato Live -->
+        <div id="live-status" class="status-badge status-closed">
+            Caricamento stato...
+        </div>
+
+        <!-- Pulsante Guardia Medica Separato in Alto -->
+        <div id="guardia-medica-box" style="display: none; margin-bottom: 15px; width: 100%;">
+            <a href="tel:800040050" class="btn-call" style="background: #dc3545;">Chiama Guardia Medica (800 040050)</a>
+        </div>
+
+        <!-- Selettore Località -->
+        <div class="tabs">
+            <button id="btn-guelfo" class="tab-btn active" onclick="switchTab('guelfo')">CASTEL GUELFO</button>
+            <button id="btn-medicina" class="tab-btn" onclick="switchTab('medicina')">MEDICINA</button>
+        </div>
+
+        <!-- Castel Guelfo -->
+        <div id="guelfo" class="tab-content active">
+            <div class="card">
+                <div class="address-box">
+                    📍 Via Antonio Gramsci 24, Castel Guelfo
+                </div>
+                <div class="timetable-row" id="guelfo-1">
+                    <span class="day-name">LUN <span class="lbl-today"></span></span>
+                    <span class="time-value">08:00 - 11:00</span>
+                </div>
+                <div class="timetable-row" id="guelfo-2">
+                    <span class="day-name">MAR <span class="lbl-today"></span></span>
+                    <span class="time-value">17:00 - 19:00</span>
+                </div>
+                <div class="timetable-row" id="guelfo-3">
+                    <span class="day-name">MER <span class="lbl-today"></span></span>
+                    <span class="time-value">17:00 - 19:00</span>
+                </div>
+                <div class="timetable-row" id="guelfo-4">
+                    <span class="day-name">GIO <span class="lbl-today"></span></span>
+                    <span class="time-value">08:00 - 11:00</span>
+                </div>
+                <div class="timetable-row" id="guelfo-5">
+                    <span class="day-name">VEN <span class="lbl-today"></span></span>
+                    <span class="time-value">17:00 - 19:00</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Medicina -->
+        <div id="medicina" class="tab-content">
+            <div class="card">
+                <div class="address-box">
+                    📍 Via Saffi 1, Medicina (c/o Casa della Comunità)
+                </div>
+                <div class="timetable-row" id="medicina-1">
+                    <span class="day-name">LUN <span class="lbl-today"></span></span>
+                    <span class="time-value">15:30 - 19:00</span>
+                </div>
+                <div class="timetable-row" id="medicina-2">
+                    <span class="day-name">MAR <span class="lbl-today"></span></span>
+                    <span class="time-value">09:00 - 12:30</span>
+                </div>
+                <div class="timetable-row" id="medicina-3">
+                    <span class="day-name">MER <span class="lbl-today"></span></span>
+                    <span class="time-value">12:30 - 15:30</span>
+                </div>
+                <div class="timetable-row" id="medicina-4">
+                    <span class="day-name">GIO <span class="lbl-today"></span></span>
+                    <span class="time-value">12:30 - 15:30</span>
+                </div>
+                <div class="timetable-row" id="medicina-5">
+                    <span class="day-name">VEN <span class="lbl-today"></span></span>
+                    <span class="time-value">12:30 - 15:30</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Urgenze Diurne -->
+        <div class="card info-section" style="border-left: 4px solid #dc3545;">
+            <p class="info-title" style="color: #dc3545;">🚨 Urgenze Reali</p>
+            Per necessità urgenti indifferibili nei giorni feriali:<br>
+            <a href="tel:+393392173803" class="btn-call" style="background: #dc3545;">Chiama Di Cintio</a>
+        </div>
+
+        <!-- Segreteria e Ricette Unificate -->
+        <div class="card info-section">
+            <p class="info-title">📅 Segreteria e Prenotazioni</p>
+            Si riceve solo su appuntamento.
+            <ul>
+                <li>Giorni feriali ordinari: dalle 9:00 alle 13:00</li>
+                <li>Il martedì: dalle 9:00 alle 11:00 e dalle 15:30 alle 17:30</li>
+            </ul>
+            <a href="tel:+393393476296" class="btn-call">Chiama Segreteria</a>
+            
+            <p class="info-title" style="margin-top: 15px;">💊 Ripetizione Ricette (In Studio a Castel Guelfo)</p>
+            Presenza fisica in studio per ritiro e consegna richieste:
+            <ul>
+                <li>Da Lunedì a Venerdì: dalle 15:00 alle 17:00</li>
+            </ul>
+        </div>
+
+    </div>
+
+    <script>
+        function switchTab(location) {
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+            
+            if(location === 'guelfo') {
+                document.getElementById('btn-guelfo').classList.add('active');
+                document.getElementById('guelfo').classList.add('active');
+            } else {
+                document.getElementById('btn-medicina').classList.add('active');
+                document.getElementById('medicina').classList.add('active');
+            }
+        }
+
+        function checkStatus() {
+            const now = new Date();
+            const day = now.getDay(); 
+            const hour = now.getHours();
+            const min = now.getMinutes();
+            const timeFloat = hour + (min / 60);
+
+            let isOpenGuelfo = false;
+            let isOpenMedicina = false;
+
+            if (day === 1 && timeFloat >= 8 && timeFloat < 11) isOpenGuelfo = true;
+            if (day === 2 && timeFloat >= 17 && timeFloat < 19) isOpenGuelfo = true;
+            if (day === 3 && timeFloat >= 17 && timeFloat < 19) isOpenGuelfo = true;
+            if (day === 4 && timeFloat >= 8 && timeFloat < 11) isOpenGuelfo = true;
+            if (day === 5 && timeFloat >= 17 && timeFloat < 19) isOpenGuelfo = true;
+
+            if (day === 1 && timeFloat >= 15.5 && timeFloat < 19) isOpenMedicina = true;
+            if (day === 2 && timeFloat >= 9 && timeFloat < 12.5) isOpenMedicina = true;
+            if (day === 3 && timeFloat >= 12.5 && timeFloat < 15.5) isOpenMedicina = true;
+            if (day === 4 && timeFloat >= 12.5 && timeFloat < 15.5) isOpenMedicina = true;
+            if (day === 5 && timeFloat >= 12.5 && timeFloat < 15.5) isOpenMedicina = true;
+
+            const badge = document.getElementById('live-status');
+            const guardiaBox = document.getElementById('guardia-medica-box');
+
+            if (isOpenGuelfo) {
+                badge.className = "status-badge status-open";
+                badge.innerHTML = "🟢 Aperto adesso a Castel Guelfo";
+                switchTab('guelfo');
+                guardiaBox.style.display = "none";
+            } else if (isOpenMedicina) {
+                badge.className = "status-badge status-open";
+                badge.innerHTML = "🟢 Aperto adesso a Medicina";
+                switchTab('medicina');
+                guardiaBox.style.display = "none";
+            } else {
+                badge.className = "status-badge status-closed";
+                badge.innerHTML = "🔴 Chiuso adesso";
+                guardiaBox.style.display = "block";
+            }
+
+            if (day >= 1 && day <= 5) {
+                const rowGuelfo = document.getElementById(`guelfo-${day}`);
+                const rowMedicina = document.getElementById(`medicina-${day}`);
+                
+                if(rowGuelfo) {
+                    rowGuelfo.classList.add('today-highlight');
+                    rowGuelfo.querySelector('.lbl-today').innerText = '(Oggi)';
+                }
+                if(rowMedicina) {
+                    rowMedicina.classList.add('today-highlight');
+                    rowMedicina.querySelector('.lbl-today').innerText = '(Oggi)';
+                }
+            }
+        }
+
+        window.onload = checkStatus;
+    </script>
+</body>
+</html>
